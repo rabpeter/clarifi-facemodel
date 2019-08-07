@@ -9,7 +9,7 @@ const app = new Clarifai.App({
 })
 
 // Overlaid on faces
-const overlay = 'F'
+const overlay = '😍'
 
 class Home extends Component {
   constructor (props) {
@@ -37,28 +37,34 @@ class Home extends Component {
       ctx.textBaseline = 'top'
 
       // For each bounding box we calculate the 'real' coordinates (x, y, width, height) of the faces and push the overlay emoji on top of it
-      for (let i = 0; i < newImgInfo.clarifaiFaces.length; i++) {
-        const box = {
-          x: newImgInfo.clarifaiFaces[i].left_col * newImgInfo.width,
-          y: newImgInfo.clarifaiFaces[i].top_row * newImgInfo.height,
-          w: (newImgInfo.clarifaiFaces[i].right_col * newImgInfo.width) - (newImgInfo.clarifaiFaces[i].left_col * newImgInfo.width),
-          h: (newImgInfo.clarifaiFaces[i].bottom_row * newImgInfo.height) - (newImgInfo.clarifaiFaces[i].top_row * newImgInfo.height)
-        }
-        newImgInfo.realFaces.push(box)
-        ctx.beginPath()
-        ctx.rect(box.x, box.y, box.w, box.h)
-        ctx.lineWidth = 4
-        ctx.strokeStyle = 'blue'
-        ctx.stroke()
+      if (newImgInfo.clarifaiFaces) {
+        for (let i = 0; i < newImgInfo.clarifaiFaces.length; i++) {
+          const box = {
+            x: newImgInfo.clarifaiFaces[i].left_col * newImgInfo.width,
+            y: newImgInfo.clarifaiFaces[i].top_row * newImgInfo.height,
+            w: (newImgInfo.clarifaiFaces[i].right_col * newImgInfo.width) - (newImgInfo.clarifaiFaces[i].left_col * newImgInfo.width),
+            h: (newImgInfo.clarifaiFaces[i].bottom_row * newImgInfo.height) - (newImgInfo.clarifaiFaces[i].top_row * newImgInfo.height)
+          }
+          newImgInfo.realFaces.push(box)
+          ctx.beginPath()
+          ctx.rect(box.x, box.y, box.w, box.h)
+          ctx.lineWidth = 4
+          ctx.strokeStyle = 'blue'
+          ctx.closePath()
+          ctx.stroke()
 
-        this.setState({
-          imgInfo: newImgInfo
-        })
-        // ctx.font = (box.w * 1.4) + 'px monospace'
-        // ctx.font = '3px monospace'
-        // ctx.fillText(overlay, box.x - (box.w / 5), box.y - (box.h / 4))
+          ctx.fillStyle = "white"
+          ctx.textBaseline = 'middle'
+          ctx.font = (box.w * 0.9) + 'px monospace'
+          ctx.fillText(overlay, box.x + (box.w / 12), box.y + (box.h / 1.75))
+
+          this.setState({
+            imgInfo: newImgInfo
+          })
+        }
       }
     }
+    image.crossOrigin = "anonymous"
     image.src = imgInfo.b64
   }
 
@@ -122,7 +128,6 @@ class Home extends Component {
 
   render () {
     const { imgInfo } = this.state
-    console.log('imgInfo: ', imgInfo)
 
     return (<div className='home'>
       <div className='input-group'>
@@ -134,6 +139,7 @@ class Home extends Component {
           <img src={imgInfo.b64} onLoad={this.onLoadImg} />
         </div>
         <div className='col'>
+          Faces detected: {imgInfo.realFaces ? imgInfo.realFaces.length : 0}
           <canvas id='canvas' ref={canvasRef => this.canvasRef = canvasRef} width={imgInfo.width} height={imgInfo.height} />
         </div>
       </div>
