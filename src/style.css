@@ -1,0 +1,34 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.home {
+ text-align: center;
+ margin: 0 auto;
+ padding: 1rem;
+ line-height: 3rem;
+}
+
+.face-results {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 90%;
+  margin: 0 auto;
+}
+.face-results > .col {
+  max-width: 50%;
+  padding: 1rem;
+  position: relative;
+}
+
+.face-results > .col img {
+  max-width: 100%;
+}
+
+.face-results > .col canvas {
+  vertical-align: top;
+  z-index: 1;
+  max-width: 100%;
+}
