@@ -8,7 +8,7 @@ const app = new Clarifai.App({
   apiKey: API_KEY
 })
 
-// Overlaid on faces
+// Overlay on faces, emoji or a letter
 const overlay = '😍'
 
 class Home extends Component {
